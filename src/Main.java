@@ -37,8 +37,8 @@ public class Main {
                 switch (option) {
                     case 1 -> {
                         int userOption;
-                        List<String> listUserOption = new ArrayList<>((Arrays.asList(" " +
-                                        "1. Add New User    ",
+                        List<String> listUserOption = new ArrayList<>((Arrays.asList(
+                                " 1. Add New User    ",
                                 " 2. Update Old User ",
                                 " 3. Delete Old User ",
                                 " 4. Show all Users   ",
