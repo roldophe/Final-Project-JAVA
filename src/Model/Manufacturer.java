@@ -22,10 +22,10 @@ public class Manufacturer {
         this.license = license;
     }
     public Manufacturer addManufacturer(Scanner scanner){
-        name=Invalidation.getName("Enter Manu_Name: ",scanner);
+        name=Invalidation.getManufacturerName("Enter Manu_Name: ",scanner);
         description=Invalidation.getString("Enter description: ",scanner);
         address=Invalidation.getString("Enter address: ",scanner);
-        license=Invalidation.getName("Enter license: ",scanner);
+        license=Invalidation.getString("Enter license: ",scanner);
         return this;
     }
     @Override

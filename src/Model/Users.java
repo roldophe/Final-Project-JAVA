@@ -108,7 +108,7 @@ public class Users {
         String username = Invalidation.getUniqueName("Enter username: ", scanner);
         String email = Invalidation.getSignIn("Enter email:", scanner);
         String password = Invalidation.getSignIn("Enter password:", scanner);
-        String gender = Invalidation.getString("Enter gender:",scanner);
+        String gender = Invalidation.getGender("Enter gender:",scanner);
         String role = Invalidation.getString("Enter role:",scanner);
         String remark = Invalidation.getString("Enter remark:",scanner);
         Boolean isDisabled = Invalidation.getBoolean("Is disabled(true or false):", scanner);

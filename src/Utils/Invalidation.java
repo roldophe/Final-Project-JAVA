@@ -66,6 +66,31 @@ public class Invalidation {
         return input;
     }
 
+    public static String getManufacturerName(String message, Scanner scanner) {
+        String input = null;
+        while (true) {
+            try {
+                System.out.print(message);
+                input = scanner.nextLine();
+                if (input.matches("[a-zA-Z ]")) {
+                    throw new IllegalAccessException("Please input only letters.");
+                }
+                List<Manufacturer> manufacturers = ManufacturerRepository.getAllManufacturers();
+                String finalInput = input;
+                assert manufacturers != null;
+                Manufacturer isNull = manufacturers.stream().filter(e -> e.getName().equals(finalInput)).findFirst().orElse(null);
+                if (isNull == null) {
+                    return finalInput;
+                } else throw new SQLException("Error: Key (manu_name)=(" + finalInput + ") already exists.");
+            } catch (IllegalAccessException e) {
+                System.out.println(e.getMessage());
+                scanner.nextLine();
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
     public static String getCategoryName(String message, Scanner scanner) {
         String input = null;
         while (true) {
@@ -90,6 +115,7 @@ public class Invalidation {
             }
         }
     }
+
     public static String getProductName(String message, Scanner scanner) {
         String input = null;
         while (true) {
@@ -114,6 +140,7 @@ public class Invalidation {
             }
         }
     }
+
     public static String getUniqueName(String message, Scanner scanner) {
         String input = null;
         while (true) {
@@ -157,6 +184,22 @@ public class Invalidation {
         return input;
     }
 
+    public static String getGender(String message, Scanner scanner) {
+        String input = null;
+        while (true) {
+            try {
+                System.out.print(message);
+                input = scanner.nextLine();
+                if (!(input.equalsIgnoreCase("male") || input.equalsIgnoreCase("female"))) {
+                    throw new RuntimeException("Must input male or female!");
+                }
+                return input;
+            } catch (RuntimeException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
     public static String getSignIn(String message, Scanner scanner) {
         String input;
         while (true) {
@@ -189,6 +232,7 @@ public class Invalidation {
         }
         return result;
     }
+
     // Method to set the madeAtDate field from user input and return the value
     public static Timestamp getTimestamp(String message, Scanner scanner) {
         while (true) {
@@ -202,6 +246,7 @@ public class Invalidation {
             }
         }
     }
+
     public static Integer getCheckProId(String message, Scanner scanner) throws SQLException {
         Integer number = null;
         List<Products> products = ProductRepository.getAllProducts();
@@ -219,7 +264,7 @@ public class Invalidation {
                 Products pro_id = products.stream().filter(e -> Objects.equals(e.getId(), finalNumber)).findFirst().orElse(null);
                 assert stocks != null;
                 Stocks stock_proId = stocks.stream().filter(e -> Objects.equals(e.getPro_id(), finalNumber)).findFirst().orElse(null);
-                if (pro_id != null && stock_proId==null ) {
+                if (pro_id != null && stock_proId == null) {
                     return number;
                 } else {
                     throw new SQLException("key(pro_id)=" + number + " is not present or already exist!!");
@@ -231,6 +276,7 @@ public class Invalidation {
             }
         }
     }
+
     public static Integer getCheckManuId(String message, Scanner scanner) throws SQLException {
         Integer number = null;
         List<Manufacturer> manufacturers = ManufacturerRepository.getAllManufacturers();
@@ -257,6 +303,7 @@ public class Invalidation {
             }
         }
     }
+
     public static Integer getCheckCategoryId(String message, Scanner scanner) throws SQLException {
         Integer number = null;
         List<Category> categories = CategoryRepository.getCategories();
@@ -283,6 +330,7 @@ public class Invalidation {
             }
         }
     }
+
     public static Integer getCheckUserId(String message, Scanner scanner) throws SQLException {
         Integer number = null;
         List<Users> users = UserRepository.getAllUsers();
@@ -309,9 +357,10 @@ public class Invalidation {
             }
         }
     }
-    public static Integer getUpdateQty(String message,Integer update_id, Scanner scanner) throws SQLException {
+
+    public static Integer getUpdateQty(String message, Integer update_id, Scanner scanner) throws SQLException {
         Integer number = null;
-        Integer qty=null;
+        Integer qty = null;
         List<Stocks> stocks = StocksRepository.getStocks();
         while (true) {
             try {
@@ -325,7 +374,7 @@ public class Invalidation {
                 Stocks stock_id = stocks.stream().filter(e -> Objects.equals(e.getId(), update_id)).findFirst().orElse(null);
 
                 if (stock_id != null) {
-                    qty=number+stock_id.getQty();
+                    qty = number + stock_id.getQty();
                     return qty;
                 } else {
                     throw new SQLException("key(stock_id)=" + update_id + " is not present in table\"(stock)\"!");

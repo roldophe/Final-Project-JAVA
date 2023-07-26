@@ -13,8 +13,8 @@ public class Main {
         do {
             List<Users> users = UserRepository.getAllUsers();
             TableUtils.renderTable("Authenticated", null);
-            String username = "radomkhoem";//Invalidation.getString("Enter username: ", scanner);
-            String password = "123radom";//Invalidation.getString("Enter password: ", scanner);
+            String username = Invalidation.getString("Enter username: ", scanner);
+            String password = Invalidation.getString("Enter password: ", scanner);
             assert users != null;
             Users user = users.stream().filter(u -> u.getUsername().equals(username) && u.getPassword().equals(password)).findFirst().orElse(null);
             if (user != null) {
@@ -62,10 +62,10 @@ public class Main {
                                     if (update != null) {
                                         Users updated = new Users().addUser(scanner);
                                         UserRepository.setUpdateUser(updated, update_id);
-                                        System.out.println("You have successfully updated new user!!");
+                                        System.out.println("You have successfully updated old user!!");
                                         break;
                                     }
-                                    System.out.println("Key(updated_id)=(" + update_id + ") is not present in present in table(user).");
+                                    System.out.println("Key(updated_id)=(" + update_id + ") is not present in table(user).");
                                 }
                                 case 3 -> {
                                     TableUtils.renderTable("Delete Old User", null);
@@ -78,7 +78,7 @@ public class Main {
                                         System.out.println("You have successfully deleted old user!!");
                                         break;
                                     }
-                                    System.out.println("Key(delete_id)=(" + delete_id + ") is not present in present in table(user).");
+                                    System.out.println("Key(delete_id)=(" + delete_id + ") is not present in table(user).");
                                 }
                                 case 4 -> {
                                     TableUtils.renderTable("Show All Users", null);
@@ -107,6 +107,7 @@ public class Main {
                                     TableUtils.renderTable("Add New Category", null);
                                     Category addCategory = new Category().addCategory(scanner);
                                     CategoryRepository.setInsertCategory(addCategory);
+                                    System.out.println("You have successfully added new category!!");
                                 }
                                 case 2 -> {
                                     TableUtils.renderTable("Update Old Category", null);
@@ -119,20 +120,25 @@ public class Main {
                                         System.out.println("You have successfully updated old category!");
                                         break;
                                     }
-                                    System.out.println("Key(update_id)=(" + update_id + ") is not present in present in table(category).");
+                                    System.out.println("Key(update_id)=(" + update_id + ") is not present in table(category).");
                                 }
                                 case 3 -> {
                                     TableUtils.renderTable("Delete Old Category", null);
                                     Integer delete_id = Invalidation.getInteger("Enter id you want to delete: ", scanner);
-                                    List<Category> delete = CategoryRepository.getCategories();
-                                    assert delete != null;
-                                    Category update = delete.stream().filter(e -> Objects.equals(e.getId(), delete_id)).findFirst().orElse(null);
-                                    if (update != null) {
-                                        CategoryRepository.setDeleteCategory(delete_id);
-                                        System.out.println("You have successfully deleted old category!");
-                                        break;
-                                    }
-                                    System.out.println("Key(update_id)=(" + delete_id + ") is not present in present in table(category).");
+                                    List<Category> categories = CategoryRepository.getCategories();
+                                    assert categories != null;
+                                    Category delete = categories.stream().filter(e -> Objects.equals(e.getId(), delete_id)).findFirst().orElse(null);
+                                    List<Products> products = ProductRepository.getAllProducts();
+                                    if (delete != null) {
+                                        Products cat_id = products.stream().filter(e -> Objects.equals(e.getCategoryId(), delete_id)).findFirst().orElse(null);
+                                        if (cat_id == null) {
+                                            CategoryRepository.setDeleteCategory(delete_id);
+                                            System.out.println("You have successfully deleted old category!");
+                                        } else {
+                                            System.out.println("The record with ID " + delete_id + " cannot be deleted as it is still being referenced in the 'products' table.");
+                                        }
+                                    } else
+                                        System.out.println("Key(delete_id)=(" + delete_id + ") is not present in table(category).");
 
                                 }
                                 case 4 -> {
@@ -156,10 +162,9 @@ public class Main {
                                                 List<Category> showByName = Objects.requireNonNull(CategoryRepository.getCategories()).stream().sorted(Comparator.comparing(Category::getName)).toList();
                                                 TableUtils.readCategoryData(showByName);
                                             }
-                                            case 3 ->
-                                                System.out.println("Exit from showing application!");
+                                            case 3 -> System.out.println("Exit from showing application!");
                                             default ->
-                                                System.out.println("Invalid input! Enter a valid option please...!");
+                                                    System.out.println("Invalid input! Enter a valid option please...!");
                                         }
                                     } while (showOption != 3);
                                 }
@@ -196,10 +201,9 @@ public class Main {
                                         Manufacturer updateManufacturer = new Manufacturer().addManufacturer(scanner);
                                         ManufacturerRepository.setUpdateManufacturer(updateManufacturer, update_id);
                                         System.out.println("You have successfully updated old manufacturer!");
+                                        break;
                                     }
-                                    {
-                                        System.out.print("Error! Key(manu_id)=" + update_id + "is not present in table(manufacturer)");
-                                    }
+                                    System.out.println("Error! Key(manu_id)=" + update_id + " is not present in table(manufacturer)");
 
                                 }
                                 case 3 -> {
@@ -208,12 +212,18 @@ public class Main {
                                     List<Manufacturer> manufacturers = ManufacturerRepository.getAllManufacturers();
                                     assert manufacturers != null;
                                     Manufacturer delete = manufacturers.stream().filter(e -> Objects.equals(e.getId(), delete_id)).findFirst().orElse(null);
+                                    List<Products> products = ProductRepository.getAllProducts();
                                     if (delete != null) {
-                                        ManufacturerRepository.setDeleteManufacturer(delete_id);
-                                        System.out.println("You have successfully deleted old manufacturer!");
+                                        assert products != null;
+                                        Products manu_id = products.stream().filter(e -> Objects.equals(e.getManuFacturerId(), delete_id)).findFirst().orElse(null);
+                                        if (manu_id == null) {
+                                            ManufacturerRepository.setDeleteManufacturer(delete_id);
+                                            System.out.println("You have successfully deleted old manufacturer!");
+                                        } else {
+                                            System.out.println("The record with ID " + delete_id + " cannot be deleted as it is still being referenced in the 'products' table.");
+                                        }
                                     } else
                                         System.out.println("Error! Key(manu_id)=" + delete_id + " is not present in table(manufacturer)");
-
                                 }
                                 case 4 -> {
                                     Integer showOption;
@@ -283,19 +293,24 @@ public class Main {
                                     Integer delete_id = Invalidation.getInteger("Enter id you want to delete: ", scanner);
                                     List<Products> products = ProductRepository.getAllProducts();
                                     assert products != null;
-                                    Products find_id = products.stream().filter(e -> Objects.equals(e.getId(), delete_id)).findFirst().orElse(null);
-                                    if (find_id != null) {
-                                        ProductRepository.setDeleteProducts(delete_id);
-                                        System.out.println("You have successfully deleted product!!");
-                                        break;
-                                    }
-                                    System.out.println("key(pro_id)=" + delete_id + " is not present in table(product)!");
+                                    Products delete = products.stream().filter(e -> Objects.equals(e.getId(), delete_id)).findFirst().orElse(null);
+                                    List<Stocks> stocks = StocksRepository.getStocks();
+                                    if (delete != null) {
+                                        assert stocks != null;
+                                        Stocks pro_id = stocks.stream().filter(e -> Objects.equals(e.getPro_id(), delete_id)).findFirst().orElse(null);
+                                        if (pro_id == null) {
+                                            ProductRepository.setDeleteProducts(delete_id);
+                                            System.out.println("You have successfully deleted product!!");
+                                        } else
+                                            System.out.println("The record with ID " + delete_id + " cannot be deleted as it is still being referenced in the 'stock' table.");
+                                    } else
+                                        System.out.println("key(pro_id)=" + delete_id + " is not present in table(product)!");
                                 }
                                 case 4 -> {
                                     int showOption;
                                     List<String> listShowOption = new ArrayList<>((Arrays.asList(
                                             " 1. Show Ascending order (By ID)       ",
-                                            " 2. Show Ascending order (By Price)    ",
+                                            " 2. Show Ascending order (By Name)     ",
                                             " 3. Show Descending order (By price)   ",
                                             " 4. Exit from showing application      ")));
                                     do {
@@ -318,7 +333,8 @@ public class Main {
                                                 TableUtils.readProductData(showByPrice);
                                             }
                                             case 4 -> System.out.println("Exiting from program!!");
-                                            default -> System.out.println("Invalid input!! Enter a valid option please...!!");
+                                            default ->
+                                                    System.out.println("Invalid input!! Enter a valid option please...!!");
                                         }
                                     } while (showOption != 4);
                                 }
@@ -330,11 +346,12 @@ public class Main {
                     case 5 -> {
                         int stockOption;
                         List<String> listUserOption = new ArrayList<>((Arrays.asList(
-                                " 1. Add Old Stock         ",
-                                " 2. Update Old Stock      ",
-                                " 3. Delete Old Stock      ",
-                                " 4. Show all Stock       ",
-                                " 5. Exit from Stock System")));
+                                " 1. Add New Stock          ",
+                                " 2. Update Existing Stock  ",
+                                " 3. Stock Out              ",
+                                " 4. Delete Existing Stock  ",
+                                " 5. Show All Stock         ",
+                                " 6. Exit from Stock System ")));
                         do {
                             TableUtils.renderTable("Welcome to Stock Management System", listUserOption);
                             stockOption = Invalidation.getInteger(" Please Choose One: ", scanner);
@@ -389,6 +406,24 @@ public class Main {
                                         System.out.println("key(stock_id)=" + update_id + " is not present in table(stock)!");
                                 }
                                 case 3 -> {
+                                    TableUtils.renderTable("Stock Out", null);
+                                    Integer stock_id = Invalidation.getInteger("Enter the ID of the out-of-stock product: ", scanner);
+                                    List<Stocks> stocks = StocksRepository.getStocks();
+                                    assert stocks != null;
+                                    Stocks stockOut = stocks.stream().filter(e -> Objects.equals(e.getId(), stock_id)).findFirst().orElse(null);
+                                    if (stockOut != null) {
+                                        Integer update_qty = Invalidation.getInteger("Please enter a value of the out-of-stock: ", scanner);
+                                        int qty = stockOut.getQty() - update_qty;
+                                        if (qty >= 0) {
+                                            StocksRepository.setUpdateQTY(stock_id, qty);
+                                            System.out.println("You have successfully updated old stock!!");
+                                        } else {
+                                            System.out.println("Stock out value cannot be greater than stock in. Please check the data and try again.");
+                                        }
+                                    } else
+                                        System.out.println("key(stock_id)=" + stock_id + " is not present in table(stock)!");
+                                }
+                                case 4 -> {
                                     TableUtils.renderTable("Delete Old Stock", null);
                                     Integer delete_id = Invalidation.getInteger("Enter id you want to delete: ", scanner);
                                     List<Stocks> stocks = StocksRepository.getStocks();
@@ -401,7 +436,7 @@ public class Main {
                                     }
                                     System.out.println("key(stock_id)=" + delete_id + " is not present in table(stock)!");
                                 }
-                                case 4 -> {
+                                case 5 -> {
                                     Integer showOption;
                                     List<String> listShowOption = new ArrayList<>((Arrays.asList(
                                             "1. Show Ascending order (By stock_id)    ",
@@ -456,10 +491,10 @@ public class Main {
                                         }
                                     } while (showOption != 6);
                                 }
-                                case 5 -> System.out.println("Exiting from Stock application...!");
+                                case 6 -> System.out.println("Exiting from Stock application...!");
                                 default -> System.out.println("Invalid option! Enter valid option please...!!");
                             }
-                        } while (stockOption != 5);
+                        } while (stockOption != 6);
                     }
                     case 6 -> System.out.println("Exiting from management system  application...!");
                     default -> System.out.println("Invalid option! Enter valid option please...!!");
