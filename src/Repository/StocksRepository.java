@@ -4,7 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 public class StocksRepository {
-    private static final String URL = "jdbc:postgresql://localhost:5432/final_project_sms";
+    private static final String URL = "jdbc:postgresql://localhost:5432/postgres";
     private static final String USER = "postgres";
     private static final String PASSWORD = "Radom1771";
     private static final String GET_STOCKS= """
